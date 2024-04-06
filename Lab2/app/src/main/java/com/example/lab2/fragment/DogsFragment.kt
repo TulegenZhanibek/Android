@@ -34,7 +34,7 @@ class DogsFragment : Fragment() {
     }
 
     private fun fetchDogsData() {
-        ApiDogsClient.apiDogsService.getDogsByName("golden retriever").enqueue(object : Callback<List<Dogs>> {
+        ApiDogsClient.apiDogsService.getDogsByName("name").enqueue(object : Callback<List<Dogs>> {
             override fun onResponse(call: Call<List<Dogs>>, response: Response<List<Dogs>>) {
                 if (response.isSuccessful) {
                     response.body()?.let { dogsList ->

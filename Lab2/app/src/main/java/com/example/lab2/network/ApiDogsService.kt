@@ -7,5 +7,5 @@ import retrofit2.http.Query
 
 interface ApiDogsService {
     @GET("/v1/dogs")
-    fun getDogsByName(@Query("golden retriever") name: String): Call<List<Dogs>>
+    fun getDogsByName(@Query("name") name: String): Call<List<Dogs>>
 }
