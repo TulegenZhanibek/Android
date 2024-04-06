@@ -1,9 +1,12 @@
 package com.example.lab2.fragment
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,6 +22,7 @@ class DogsFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var dogsAdapter: DogsAdapter
+    private lateinit var fullDogList: List<Dogs>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -29,25 +33,46 @@ class DogsFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         dogsAdapter = DogsAdapter()
         recyclerView.adapter = dogsAdapter
-        fetchDogsData() // Call method to fetch dogs data
+
+        val searchEditText = view.findViewById<EditText>(R.id.searchEditText)
+        searchEditText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+            override fun afterTextChanged(s: Editable?) {
+                val searchText = s.toString().trim()
+                dogsAdapter.filter(searchText)
+            }
+        })
+        fetchDogsData()
+
         return view
     }
 
     private fun fetchDogsData() {
-        ApiDogsClient.apiDogsService.getDogsByName("name").enqueue(object : Callback<List<Dogs>> {
+        ApiDogsClient.apiDogsService.getDogsByName("retriever").enqueue(object : Callback<List<Dogs>> {
             override fun onResponse(call: Call<List<Dogs>>, response: Response<List<Dogs>>) {
                 if (response.isSuccessful) {
                     response.body()?.let { dogsList ->
                         dogsAdapter.submitList(dogsList)
                     }
                 } else {
-                    // Handle error response
+                    // error response
                 }
             }
 
             override fun onFailure(call: Call<List<Dogs>>, t: Throwable) {
-                // Handle network failure
+                // network failure
             }
         })
+    }
+    private fun filterDogs(query: String) {
+        val filteredList = if (query.isBlank()) {
+            fullDogList
+        } else {
+            fullDogList.filter { it.name.contains(query, ignoreCase = true) }
+        }
+        dogsAdapter.submitList(filteredList)
     }
 }

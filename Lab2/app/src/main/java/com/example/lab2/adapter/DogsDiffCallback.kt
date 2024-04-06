@@ -5,7 +5,7 @@ import com.example.lab2.entity.Dogs
 
 class DogsDiffCallback : DiffUtil.ItemCallback<Dogs>() {
     override fun areItemsTheSame(oldItem: Dogs, newItem: Dogs): Boolean {
-        return oldItem.id == newItem.id
+        return oldItem.name == newItem.name
     }
 
     override fun areContentsTheSame(oldItem: Dogs, newItem: Dogs): Boolean {
